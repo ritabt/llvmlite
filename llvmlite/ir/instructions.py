@@ -110,9 +110,8 @@ class CallInstr(Instruction):
         return self.callee
 
     def _descr(self, buf, add_metadata):
-        args = ', '.join(['{0} {1}'.format(a.type, a.get_reference())
-                          for a in self.args])
-
+        args = ', '.join(['{0} {1} {2}'.format(self.args[i].type, self.param_attr[i], self.args[i].get_reference())
+                          for i in range(len(self.args))])
         fnty = self.callee.function_type
         # Only print function type if variable-argument
         if fnty.var_arg:
@@ -134,9 +133,10 @@ class CallInstr(Instruction):
             meta=(self._stringify_metadata(leading_comma=True)
                   if add_metadata else ""),
         ))
-
     def descr(self, buf):
         self._descr(buf, add_metadata=True)
+    def addParamAttr(self, attributes:Tuple[str, ...]):
+        self.param_attr = attributes
 
 
 class InvokeInstr(CallInstr):
