@@ -7,6 +7,7 @@ from llvmlite.ir.values import (Block, Function, Value, NamedValue, Constant,
                                 MetaDataArgument, MetaDataString, AttributeSet,
                                 Undefined)
 from llvmlite.ir._utils import _HasMetadata
+from typing import List, Optional, Tuple, Union
 
 
 class Instruction(NamedValue, _HasMetadata):
@@ -86,6 +87,7 @@ class CallInstr(Instruction):
 
         super(CallInstr, self).__init__(parent, func.function_type.return_type,
                                         "call", [func] + list(args), name=name)
+        self.param_attr = None
 
     @property
     def callee(self):
@@ -109,9 +111,23 @@ class CallInstr(Instruction):
         """Alias for llvmpy"""
         return self.callee
 
+    def addParamAttr(self, attributes:Tuple[str, ...]):
+        self.param_attr = attributes
+
     def _descr(self, buf, add_metadata):
-        args = ', '.join(['{0} {1} {2}'.format(self.args[i].type, self.param_attr[i], self.args[i].get_reference())
-                          for i in range(len(self.args))])
+        args = ''
+        if self.param_attr is None:
+            args = ', '.join(['{0} {1}'.format(a.type, a.get_reference())
+                          for a in self.args])
+        else:
+            for i in range(len(self.args)):
+                if args != '':
+                    args += ', '
+                if i < len(self.param_attr) and self.param_attr[i] is not None:
+                    args += '{0} {1} {2}'.format(self.args[i].type, self.param_attr[i], self.args[i].get_reference())
+                else:
+                    args += '{0} {1}'.format(self.args[i].type, self.args[i].get_reference())
+
         fnty = self.callee.function_type
         # Only print function type if variable-argument
         if fnty.var_arg:
@@ -135,8 +151,7 @@ class CallInstr(Instruction):
         ))
     def descr(self, buf):
         self._descr(buf, add_metadata=True)
-    def addParamAttr(self, attributes:Tuple[str, ...]):
-        self.param_attr = attributes
+    
 
 
 class InvokeInstr(CallInstr):

@@ -327,25 +327,25 @@ class IRBuilder(object):
         self.position_at_end(bbend)
 
     
-    @contextlib.contextmanager
-    def while_then(self, pred):
-        """
-        A context manager which sets up a conditional basic block based
-        on the given predicate (a i1 value).  If the conditional block
-        is not explicitly terminated, a branch will be added to the next
-        block.
-        """
-        bb = self.basic_block
-        bbwhile = self.append_basic_block(name=_label_suffix(bb.name, '.while'))
-        bbend = self.append_basic_block(name=_label_suffix(bb.name, '.endwhile'))
+    # @contextlib.contextmanager
+    # def while_then(self, pred):
+    #     """
+    #     A context manager which sets up a conditional basic block based
+    #     on the given predicate (a i1 value).  If the conditional block
+    #     is not explicitly terminated, a branch will be added to the next
+    #     block.
+    #     """
+    #     bb = self.basic_block
+    #     bbwhile = self.append_basic_block(name=_label_suffix(bb.name, '.while'))
+    #     bbend = self.append_basic_block(name=_label_suffix(bb.name, '.endwhile'))
 
-        br =  self.cbranch(pred(), bbwhile, bbend)
+    #     br =  self.cbranch(pred(), bbwhile, bbend)
 
-        with self._branch_helper(bbwhile, bbend):
-            yield bbend
-            br =  self.cbranch(pred(), bbwhile, bbend)
+    #     with self._branch_helper(bbwhile, bbend):
+    #         yield bbend
+    #         br =  self.cbranch(pred(), bbwhile, bbend)
 
-        self.position_at_end(bbend)
+    #     self.position_at_end(bbend)
 
 
     def _insert(self, instr):
@@ -932,8 +932,7 @@ class IRBuilder(object):
         Returns vector with vector[idx] replaced by value.
         The result is undefined if the idx is larger or equal the vector length.
         """
-        instr = instructions.InsertElement(self.block, vector, value, idx,
-                                           name=name)
+        instr = instructions.InsertElement(self.block, vector, value, idx, name=name)
         self._insert(instr)
         return instr
 
