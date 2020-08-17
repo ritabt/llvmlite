@@ -20,7 +20,6 @@ from distutils.dir_util import remove_tree
 from distutils.spawn import spawn
 import os
 import sys
-import shutil
 
 if os.environ.get('READTHEDOCS', None) == 'True':
     sys.exit("setup.py disabled on readthedocs: called with %s"
@@ -162,9 +161,6 @@ packages = ['llvmlite',
             'llvmlite.tests',
             ]
 
-install_requires = ['enum34; python_version < "3.4"']
-setup_requires = ['enum34; python_version < "3.4"']
-
 
 with open('README.rst') as f:
     long_description = f.read()
@@ -174,15 +170,16 @@ setup(name='llvmlite',
       description="lightweight wrapper around basic LLVM functionality",
       version=versioneer.get_version(),
       classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Topic :: Software Development :: Code Generators",
-        "Topic :: Software Development :: Compilers",
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Operating System :: OS Independent",
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Topic :: Software Development :: Code Generators",
+          "Topic :: Software Development :: Compilers",
       ],
       # Include the separately-compiled shared library
       author="Continuum Analytics, Inc.",
@@ -190,9 +187,8 @@ setup(name='llvmlite',
       url="http://llvmlite.pydata.org",
       download_url="https://github.com/numba/llvmlite",
       packages=packages,
-      install_requires=install_requires,
-      setup_requires=setup_requires,
       license="BSD",
       cmdclass=cmdclass,
       long_description=long_description,
+      python_requires=">=3.6",
       )
